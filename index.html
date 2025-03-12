@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Meta and Title -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MedSegFactory</title>
+
+    <!-- Fonts and Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+    <!-- External Stylesheets -->
+    <link rel="stylesheet" href="styles.css">
+    <link href="../css/cs.css" rel="stylesheet">
+
+    <!-- MathJax Configuration -->
+    <script>
+      window.MathJax = {
+        tex: {
+          inlineMath: [['$', '$'], ['\\(', '\\)']],  // 允许 $...$ 和 \( ... \) 作为内联公式
+          displayMath: [['$$', '$$'], ['\\[', '\\]']]  // 允许 $$ ... $$ 和 \[ ... \] 作为块级公式
+        }
+      };
+    </script>
+
+    <!-- MathJax CDN -->
+    <script type="text/javascript" async
+      src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+    </script>
+
+    <!-- Internal Styles -->
+    <style>
+      body {
+        background: #fdfcf9 no-repeat fixed top left;
+        font-family:'DM Mono','Open Sans', sans-serif;
+      }
+      pre {
+        /* Existing styles */
+      }
+      code {
+        /* Existing styles */
+      }
+    </style>
+</head>
+<body>
+    <header>
+        <!-- Existing header content -->
+        <div class="container">
+            <h1>MedSegFactory: Text-Guided Generation of Medical Image-Mask Pairs</h1>
+            <br/>
+            <br/>
+            <br/>
+            <br/>
+        
+            <div class="details">
+                <a href="https://github.com/jwmao1" target="_blank">Jiawei Mao</a> <sup>1</sup>,
+                <a href="https://scholar.google.com/citations?user=Bo9xeqMAAAAJ&hl=zh-CN" target="_blank">Yuhan Wang</a> <sup>1</sup>,
+                <a href="https://tangy5.github.io/" target="_blank">Yucheng Tang</a> <sup>2</sup>,
+                <a href="https://daguangxu.net/" target="_blank">Daguang Xu</a> <sup>2</sup>,
+                <a href="https://profiles.ucsf.edu/kang.wang" target="_blank">Kang Wang</a> <sup>3</sup>,
+                <a href="https://profiles.ucsf.edu/yang.yang" target="_blank">Yang Yang</a> <sup>3</sup>,
+                <a href="https://www.zongweiz.com/" target="_blank">Zongwei Zhou</a> <sup>4</sup>,
+                <a href="https://yuyinzhou.github.io/" target="_blank">Yuyin Zhou</a> <sup>1</sup>
+            </div>
+            <div class="details">
+                <sup>1</sup><a href="https://ucsc-vlaa.github.io/" target="_blank">UC Santa Cruz</a>, 
+                <sup>2</sup><a href="https://research.nvidia.com/research-area/medical" target="_blank">NVIDIA</a>,
+                <sup>3</sup><a href="https://www.ucsf.edu/" target="_blank">UC San Francisco</a>
+                <sup>4</sup><a href="https://www.cs.jhu.edu/" target="_blank">Johns Hopkins University</a>
+            </div>
+            <div class="links">
+                <a href="https://github.com/jwmao1/story-adapter" target="_blank">
+                    <i class="fab fa-github"></i> GitHub
+                </a>
+                <a href="https://arxiv.org/abs/2410.06244" target="_blank">
+                    <i class="fas fa-file-alt"></i> arXiv
+                </a>
+            </div>
+        </div>
+    </header>
+    <div class="container main">
+        <section class="section section-abstract">
+            <div class="add-div" style="height: 150px;">
+                <img src="images/logo.png" height="170"/>
+            </div>
+            <h2>Abstract</h2>
+            <div class="abs">
+                This paper presents MedSegFactory, a versatile medical synthesis framework trained across multiple modalities and tasks. The core of MedSegFactory is a dual-stream diffusion model, where one stream synthesizes medical images and the other generates corresponding segmentation masks. To ensure precise alignment between image-mask pairs, we introduce Joint Cross-Attention (JCA), enabling a collaborative denoising paradigm by dynamic cross-conditioning between streams. This bidirectional interaction allows both representations to guide each other's generation, enhancing consistency between generated pairs. MedSegFactory unlocks on-demand generation of paired medical images and segmentation masks through user-defined prompts that specify the target labels, imaging modalities, anatomical regions, and pathological conditions, facilitating scalable and high-quality data generation. This new paradigm of medical image synthesis enables seamless integration into diverse medical imaging workflows, enhancing both efficiency and accuracy. Extensive experiments show that MedSegFactory generates data of superior quality and usability, achieving competitive or state-of-the-art performance in 2D and 3D segmentation tasks while addressing data scarcity and regulatory constraints.
+            </div>
+        </section>
+
+        <section class="section section-other">
+            <h2>MedSegFactory Pipeline</h2>
+            <div class="abs">
+                <p><strong>Overview of the MedSegFactory Training Pipeline.</strong> <em>Left:</em> A dual-stream generation framework built upon the Stable Diffusion model, where each paired image and segmentation mask \(\{x_{i}, m_{i}\}\) are first encoded into latent representations and noised. These noised representations are then denoised by the Diffusion U-Net, producing the image and segmentation mask latent \(\{\hat{z}_{0}, \hat{y}_{0}\}\), which are ultimately decoded into a paired image and mask \(\{\hat{x}_{i}, \hat{m}_{i}\}\). To improve their semantic consistency, we introduce <strong>Joint Cross-Attention (JCA)</strong>, which allows the denoised latent representations of both streams to act as dynamic conditions, enhancing the mutual generation of images and masks. <em>Right:</em> A detailed illustration of JCA, which applies two cross-attention functions to the intermediate denoising features \(\{z_{t}, y_{t}\}\), enabling the cross-conditioning of the medical image and segmentation label for improved consistency in the final outputs.</p>
+            </div>
+            <div class="add-div">
+                <img src="images/images/framework.jpg" style="width: 100%;"/>
+            </div>
+        </section>
+
+<!-- 修改后的 Regular-length Story Visualization 部分 -->
+<!--        <section class="section section-no-border">-->
+<!--            <h2>Regular-length Story Visualization</h2>-->
+<!--            <div class="video-grid-6">-->
+<!--                &lt;!&ndash; 视频 1 &ndash;&gt;-->
+<!--                <div class="video-item">-->
+<!--                    <video src="images/video_regular_length/video1.mp4" autoplay controls muted></video>-->
+<!--                    <div class="video-title">A story of "Pigeon" visualized by our Story-Adapter</div>-->
+<!--                </div>-->
+<!--                &lt;!&ndash; 视频 2 &ndash;&gt;-->
+<!--                <div class="video-item">-->
+<!--                    <video src="images/video_regular_length/video2.mp4" autoplay controls muted></video>-->
+<!--                    <div class="video-title">A story of "Dinosaur and Traveler" visualized by our Story-Adapter</div>-->
+<!--                </div>-->
+<!--                &lt;!&ndash; 视频 3 &ndash;&gt;-->
+<!--                <div class="video-item">-->
+<!--                    <video src="images/video_regular_length/video3.mp4" autoplay controls muted></video>-->
+<!--                    <div class="video-title">A story of "Boy" visualized by our Story-Adapter</div>-->
+<!--                </div>-->
+<!--                &lt;!&ndash; 视频 4 &ndash;&gt;-->
+<!--                <div class="video-item">-->
+<!--                    <video src="images/video_regular_length/video4.mp4" autoplay controls muted></video>-->
+<!--                    <div class="video-title">A story of "Pepper" visualized by our Story-Adapter</div>-->
+<!--                </div>-->
+<!--                &lt;!&ndash; 视频 5 &ndash;&gt;-->
+<!--                <div class="video-item">-->
+<!--                    <video src="images/video_regular_length/video5.mp4" autoplay controls muted></video>-->
+<!--                    <div class="video-title">A story of "Gril" visualized by our Story-Adapter</div>-->
+<!--                </div>-->
+<!--                &lt;!&ndash; 视频 6 &ndash;&gt;-->
+<!--                <div class="video-item">-->
+<!--                    <video src="images/video_regular_length/video6.mp4" autoplay controls muted></video>-->
+<!--                    <div class="video-title">A story of "Animal Rescuer" visualized by our Story-Adapter</div>-->
+<!--                </div>-->
+<!--                &lt;!&ndash; 视频 7 &ndash;&gt;-->
+<!--                <div class="video-item">-->
+<!--                    <video src="images/video_regular_length/video7.mp4" autoplay controls muted></video>-->
+<!--                    <div class="video-title">A story of "City Monkey" visualized by our Story-Adapter</div>-->
+<!--                </div>-->
+<!--                &lt;!&ndash; 视频 8 &ndash;&gt;-->
+<!--                <div class="video-item">-->
+<!--                    <video src="images/video_regular_length/video8.mp4" autoplay controls muted></video>-->
+<!--                    <div class="video-title">A story of "Old Man and Monkey" visualized by our Story-Adapter</div>-->
+<!--                </div>-->
+<!--                &lt;!&ndash; 视频 9 &ndash;&gt;-->
+<!--                <div class="video-item">-->
+<!--                    <video src="images/video_regular_length/video9.mp4" autoplay controls muted></video>-->
+<!--                    <div class="video-title">A story of "The Boy's Journey" visualized by our Story-Adapter</div>-->
+<!--                </div>-->
+<!--                &lt;!&ndash; 视频 10 &ndash;&gt;-->
+<!--                <div class="video-item">-->
+<!--                    <video src="images/video_regular_length/video10.mp4" autoplay controls muted></video>-->
+<!--                    <div class="video-title">A story of "A Day for a Girl" visualized by our Story-Adapter</div>-->
+<!--                </div>-->
+<!--                &lt;!&ndash; 视频 11 &ndash;&gt;-->
+<!--                <div class="video-item">-->
+<!--                    <video src="images/video_regular_length/video11.mp4" autoplay controls muted></video>-->
+<!--                    <div class="video-title">A story of "Rain" visualized by our Story-Adapter</div>-->
+<!--                </div>-->
+<!--                &lt;!&ndash; 视频 12 &ndash;&gt;-->
+<!--                <div class="video-item">-->
+<!--                    <video src="images/video_regular_length/video12.mp4" autoplay controls muted></video>-->
+<!--                    <div class="video-title">A story of "Fruit" visualized by our Story-Adapter</div>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </section>-->
+
+<!--        &lt;!&ndash; 修改后的 Long Story Visualization 部分 &ndash;&gt;-->
+<!--        <section class="section section-no-border">-->
+<!--            <h2>Long Story Visualization</h2>-->
+<!--            <div class="video-grid-5">-->
+<!--                &lt;!&ndash; 50-length 视频 1 &ndash;&gt;-->
+<!--                <div class="video-item">-->
+<!--                    <video src="images/video_long_length/50/video1.mp4" autoplay controls muted></video>-->
+<!--                    <div class="video-title">A story of "Little Red Riding Hood" visualized by our Story-Adapter</div>-->
+<!--                </div>-->
+<!--                &lt;!&ndash; 50-length 视频 2 &ndash;&gt;-->
+<!--                <div class="video-item">-->
+<!--                    <video src="images/video_long_length/50/video2.mp4" autoplay controls muted></video>-->
+<!--                    <div class="video-title">A story of "Emperor and the Nightingale" visualized by our Story-Adapter</div>-->
+<!--                </div>-->
+<!--                &lt;!&ndash; 50-length 视频 3 &ndash;&gt;-->
+<!--                <div class="video-item">-->
+<!--                    <video src="images/video_long_length/50/video3.mp4" autoplay controls muted></video>-->
+<!--                    <div class="video-title">A story of "Robinson Crusoe" visualized by our Story-Adapter</div>-->
+<!--                </div>-->
+<!--                &lt;!&ndash; 50-length 视频 4 &ndash;&gt;-->
+<!--                <div class="video-item">-->
+<!--                    <video src="images/video_long_length/50/video4.mp4" autoplay controls muted></video>-->
+<!--                     <div class="video-title">A story of "Snowman" visualized by our Story-Adapter</div>-->
+<!--                </div>-->
+<!--                &lt;!&ndash; 50-length 视频 5 &ndash;&gt;-->
+<!--                <div class="video-item">-->
+<!--                    <video src="images/video_long_length/50/video5.mp4" autoplay controls muted></video>-->
+<!--                    <div class="video-title">A story of "Loyal Dog" visualized by our Story-Adapter</div>-->
+<!--                </div>-->
+<!--                &lt;!&ndash; 100-length 视频 1 &ndash;&gt;-->
+<!--                <div class="video-item">-->
+<!--                    <video src="images/video_long_length/100/long_video1.mp4" autoplay controls muted></video>-->
+<!--                    <div class="video-title">A story of "The Tortoise and the Hare" visualized by our Story-Adapter</div>-->
+<!--                </div>-->
+<!--                &lt;!&ndash; 100-length 视频 2 &ndash;&gt;-->
+<!--                <div class="video-item">-->
+<!--                    <video src="images/video_long_length/100/long_video2.mp4" autoplay controls muted></video>-->
+<!--                    <div class="video-title">A story of "Winnie the Pooh" visualized by our Story-Adapter</div>-->
+<!--                </div>-->
+<!--                &lt;!&ndash; 100-length 视频 3 &ndash;&gt;-->
+<!--                <div class="video-item">-->
+<!--                    <video src="images/video_long_length/100/long_video3.mp4" autoplay controls muted></video>-->
+<!--                    <div class="video-title">A story of "Pirate" visualized by our Story-Adapter</div>-->
+<!--                </div>-->
+<!--                &lt;!&ndash; 100-length 视频 4 &ndash;&gt;-->
+<!--                <div class="video-item">-->
+<!--                    <video src="images/video_long_length/100/long_video4.mp4" autoplay controls muted></video>-->
+<!--                    <div class="video-title">A story of "Lonely Me" visualized by our Story-Adapter</div>-->
+<!--                </div>-->
+<!--                &lt;!&ndash; 100-length 视频 5 &ndash;&gt;-->
+<!--                <div class="video-item">-->
+<!--                    <video src="images/video_long_length/100/long_video5.mp4" autoplay controls muted></video>-->
+<!--                    <div class="video-title">A story of "The Prince and the Princess" visualized by our Story-Adapter</div>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </section>-->
+
+        <section class="section section-other">
+            <h2>Quality</h2>
+            <div class="abs"><strong>Qualitative comparison between MedSegFactory and baselines for medical image generation.</strong> Baselines exhibit issues: irregular structures (SDM, ControlNet, DiffBoost, Finetuned-SDM), artifacts (SDM, DiffBoost, Finetuned-SDM), blurred boundaries (Finetuned-SDM), unnatural saturation (ControlNet, DiffBoost), and structural missing (MAISI). In contrast, MedSegFactory produces anatomically accurate, high-quality images.</div>
+            <div class="add-div">
+                <img src="images/images/gen.jpg" style="width: 100%;"/>
+            </div>
+        </section>
+
+        <section class="section section-other">
+            <h2>Alignment</h2>
+            <div class="abs"><strong>Alignment comparison</strong> reveals misalignment or detail loss in baseline-generated medical images versus segmentation labels (highlighted in <span style="color: red;">red box</span>.). MedSegFactory demonstrates superior alignment and finer details.</div>
+            <div class="add-div">
+                <img src="images/images/alignment2.jpg" style="width: 100%;"/>
+            </div>
+        </section>
+
+        <section class="section section-other">
+            <h2>More Examples</h2>
+            <div class="abs"><strong>MedSegFactory produces high-quality paired medical images and segmentation labels</strong>, precisely following given instructions while demonstrating diversity across multiple outputs under the same conditions.</div>
+            <div class="add-div">
+                <img src="images/images/examples.jpg" style="width: 100%;"/>
+            </div>
+        </section>
+
+        <section class="section section-other">
+            <h2>BibTeX</h2>
+            <p><b>
+                If you find our work helpful for your research, please consider giving a citation 📃
+              </b></p>
+            <div class="add-div">
+                <pre><code>
+@misc{mao2024story_adapter,
+  title={{Story-Adapter: A Training-free Iterative Framework for Long Story Visualization}},
+  author={Mao, Jiawei and Huang, Xiaoke and Xie, Yunfei and Chang, Yuanqi and Hui, Mude and Xu, Bingjie and Zhou, Yuyin},
+  journal={arXiv},
+  volume={abs/2410.06244},
+  year={2024},
+}
+                </code></pre>
+            </div>
+        </section>
+    </div>
+</body>
+</html>
