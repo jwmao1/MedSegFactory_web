@@ -1,2 +1,0 @@
-# storyadapter
-web
